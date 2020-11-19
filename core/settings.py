@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'accounts',
+    'netkineskop',
 ]
 
 MIDDLEWARE = [
@@ -118,3 +121,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+
+# YOUTUBE settings
+
+CLIENT_SECRET_FILE = 'client_secret.json'
+SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']
+API_SERVICE_NAME = 'youtube'
+API_VERSION = 'v3'
