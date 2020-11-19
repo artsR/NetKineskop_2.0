@@ -1,6 +1,11 @@
 import requests
 
+import google.oauth2.credentials
+import google_auth_oauthlib.flow
+import googleapiclient.discovery
+
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 
 
@@ -9,7 +14,7 @@ def oauth_authorize():
         CLIENT_SECRET_FILE, scopes=SCOPES
     )
     print('FLOW :', flow)
-    flow.redirect_uri = url_for('oauth_callback', _external=True)
+    flow.redirect_uri = reverse('oauth_callback')
     authorization_url, state = flow.authorization_url(
         access_type='offline', include_granted_scopes='true'
     )
@@ -26,7 +31,7 @@ def oauth_callback():
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRET_FILE, scopes=SCOPES, state=state
     )
-    flow.redirect_uri = url_for('oauth_callback', _external=True)
+    flow.redirect_uri = reverse('oauth_callback')
 
     authorization_response = request.url
     print('AUTHORIZATION RES: ', authorization_response)
@@ -35,7 +40,7 @@ def oauth_callback():
 
     request.session['credentials'] = credentials_to_dict(credentials)
     print('CREDENTIALS: ', request.session['credentials'])
-    return redirect(url_for('subscriptions'))
+    return redirect(reverse('netkineskop:home'))
 
 
 def oauth_revoke():
