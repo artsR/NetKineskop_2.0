@@ -106,3 +106,6 @@ media/
 *.pyc
 *.db
 *.pid
+
+# credentials
+client_secret.json
