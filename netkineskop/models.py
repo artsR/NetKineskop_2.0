@@ -1,3 +1,34 @@
+from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 from django.db import models
 
-# Create your models here.
+
+
+class Tag(models.Model):
+    user = models.ForeignKey(User, blank=False, on_delete=models.CASCADE)
+    name = models.CharField(max_length=32)
+    color = models.CharField(
+        max_length=7,
+        blank=True,
+        default='#cccccc',
+        validators=[RegexValidator(r'^#[0-9a-fA-F]{6}$')]
+    )
+
+    def __repr__(self):
+        return f'{self.name}'
+
+
+class Channel(models.Model):
+    user = models.ForeignKey(User, blank=False, on_delete=models.CASCADE)
+    yt_channel_id = models.CharField(max_length=64)
+
+    tags = models.ManyToManyField(Tag, related_name='channels', through='ChannelTag')
+
+    def __repr__(self):
+        return f'{self.name}'
+
+
+class ChannelTag(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    channel = models.ForeignKey(Channel, on_delete=models.CASCADE)
+    favorite = models.BooleanField(default=False)
