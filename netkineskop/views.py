@@ -25,6 +25,43 @@ def home(request):
 
 class TagView(LoginRequiredMixin, ListView):
     model = Tag
+    template_name = 'netkineskop/user_tags.html'
+    context_object_name = 'user_tags'
+    paginate_by = 15
+
+    def get_queryset(self):
+        current_user = self.request.user
+        return current_user.tags.all()
+
+
+class AddTagView(LoginRequiredMixin, CreateView):
+    model = Tag
+    form_class = TagForm
+    template_name = 'netkineskop/add_tag.html'
+    success_url = '/tags/'
+
+    def form_valid(self, form):
+        form.instance.user_id = self.request.user.id
+        return super().form_valid(form)
+
+
+class DeleteTagView(TagUserPermission, DeleteView):
+    model = Tag
+    success_url = '/tags/'
+
+
+class UpdateTagView(TagUserPermission, UpdateView):
+    model = Tag
+    form_class = TagForm
+    template_name = 'netkineskop/edit_tag.html'
+    success_url = '/tags/'
+
+
+class DetailTagView(TagUserPermission, DetailView):
+    model = Tag
+    template_name ='netkineskop/detail_tag.html'
+
+
 def subscriptions(request):
     if 'credentials' not in request.session:
         return redirect('oauth_authorize')
