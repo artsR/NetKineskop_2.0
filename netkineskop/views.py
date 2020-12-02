@@ -13,6 +13,7 @@ from django.views.generic.list import ListView
 
 from . import yt_services
 from .models import Tag, Channel, ChannelTag
+from .forms import TagForm
 from .permissions import TagUserPermission
 from accounts.views import credentials_to_dict
 
@@ -21,6 +22,9 @@ from accounts.views import credentials_to_dict
 def home(request):
     return render(request, 'netkineskop/home.html')
 
+
+class TagView(LoginRequiredMixin, ListView):
+    model = Tag
 def subscriptions(request):
     if 'credentials' not in request.session:
         return redirect('oauth_authorize')
