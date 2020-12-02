@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+<form class="row g-3" action="" method="post">
+  {% csrf_token %}
+  <div class="col-1 d-flex justify-content-center align-items-center">
+    <input class="bg-transparent" name="color" type="color" value="{{ form.color.value }}"
+        title="Choose color for Tag"/>
+  </div>
+  <div class="col-8">
+    <input class="form-control bg-transparent text-light" name="name" type="text"
+        placeholder="name" value="{{ form.name.value }}"/>
+  </div>
+  <div class="col-3">
+    <input class="form-control btn-outline-success bg-transparent" type="submit" value="Apply"/>
+  </div>
+</form>
+{% endblock content %}

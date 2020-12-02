@@ -1,0 +1,48 @@
+<div class="modal fade" id="tag-menu" tabindex="-1" aria-labelledby="TagMenu" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tag-menu-label">Choose Tag</h5>
+        <img class="rounded-circle" src="" alt="channel_image" id="channel-image"
+              width="50px" height="50px"/>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'netkineskop:mark_channel' %}" method="post" id="tag-form">
+          {% csrf_token %}
+          <div class="mb-3">
+            <span class="" id="channel-name"></span>
+          </div>
+          <input type="hidden" name="channel_id" value="" id="channel-id"/>
+          <div class="mb-3">
+            <select class="form-select" name="tag_id" id="select-tag" required>
+              <option disabled selected value>-- Choose one of your tags --</option>
+              {% for tag in request.user.tags.all %}
+              <option value="{{ tag.id }}">{{ tag.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" name="favorite" type="checkbox" value="" id="is-favorite">
+            <label class="form-check-label" for="is_favorite">
+              Favorite
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="submit-button">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const tag_form = document.querySelector('#tag-form')
+
+document.querySelector('#submit-button').addEventListener('click', () => {
+  var chosen_tag = document.getElementById('select-tag').value
+  if(chosen_tag != '') {
+    tag_form.submit()
+  }
+})
+</script>

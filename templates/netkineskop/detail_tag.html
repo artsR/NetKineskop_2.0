@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex align-items-center border border-success rounded p-3">
+  <span>
+    <h3 class="m-0 text-success">TAG Overview</h3>
+  </span>
+</div>
+<div class="list-group mt-4 px-3">
+    <span class="list-group-item list-group-item-action d-inline-flex bg-dark text-light text-truncate"
+        href="{{ tag.id }}">
+      <span>
+          <div class="d-inline-block align-middle rounded-sm rounded-circle" style="background: {{tag.color}}; width: 10px; height: 10px;"></div>
+          <span class="ml-1">{{ tag.name }}</span>
+      </span>
+      {% if tag.channels.all %}
+      <ul class="list-group">
+        {% for channel in tag.channels.all %}
+        <li class="list-group-item list-group-item-action">{{ channel.yt_channel_id }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </span>
+</div>
+{% endblock content %}

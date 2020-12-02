@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center border border-success rounded py-2 px-3">
+  <span>
+    <h3 class="m-0 text-success">TAG Center</h3>
+  </span>
+  <span class="d-flex justify-content-end">
+    <a href="{% url 'netkineskop:add_tag'%}">
+      <i class="fa fa-plus fa-3x text-light" title="Create new TAG"></i>
+    </a>
+  </span>
+</div>
+<div class="list-group mt-4 px-3">
+  {% for tag in user_tags %}
+    <button class="list-group-item list-group-item-action d-inline-flex align-items-center bg-dark text-light text-truncate"
+        id="{{ tag.id }}">
+      <span class="d-flex align-items-center">
+        <div class="d-inline-block align-middle rounded-sm rounded-circle" style="background: {{ tag.color }}; width: 10px; height: 10px;"></div>
+        <span class="ml-1">{{ tag.name }}</span>
+      </span>
+      <span class="d-flex justify-content-between align-items-center ml-auto">
+        <span class="badge rounded-pill mr-3 bg-light text-dark">
+          {{ tag.channels.all|length }}
+        </span>
+        <a class="btn btn-sm btn-info mr-2 py-0" href="{% url 'netkineskop:update_tag' tag.id %}">Edit</a>
+        <form class="" action="{% url 'netkineskop:delete_tag' tag.id %}" method="post">
+          {% csrf_token %}
+          <input type="submit" class="fa fa-times fa-2x border-0 p-0 bg-transparent text-danger" value="&#xf057"/>
+        </form>
+      </span>
+    </button>
+  {% endfor %}
+</div>
+{% include 'netkineskop/paginator.html' %}
+{% endblock content %}
+
+{% block javascript %}
+var items_detail = document.querySelectorAll('button.list-group-item')
+var href = window.location.href
+
+items_detail.forEach(item => {
+  item.addEventListener('click', () => {
+    window.location.href += item.id
+  })
+})
+{% endblock javascript%}
