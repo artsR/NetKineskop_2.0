@@ -103,6 +103,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGOUT_REDIRECT_URL = '/home/'
+LOGIN_URL = '/auth/login/'
+LOGIN_REDIRECT_URL = '/home/'
+LOGIN_VIEW_CONFIG = {
+    'template_name': 'accounts/auth.html',
+    'redirect_authenticated_user': True,
+    'extra_context': {
+        'active': 'login',
+    },
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -127,7 +138,8 @@ STATIC_URL = '/static/'
 
 # YOUTUBE settings
 
-CLIENT_SECRET_FILE = 'client_secret.json'
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+CLIENT_SECRET_FILE = os.path.join(BASE_DIR, 'client_secret.json')
 SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'

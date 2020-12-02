@@ -2,19 +2,41 @@ import requests
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
-import googleapiclient.discovery
 
+
+from django.conf import settings
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
 
 
-def oauth_authorize():
+def register(request):
+    """Register new User."""
+    if request.user.is_authenticated:
+        return redirect('netkineskop:home')
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # messages.success(request, 'New account added successfully. Now you can Sign In')
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    context = dict(form=form, active='register')
+    return render(request, 'accounts/auth.html', context)
+
+
+def oauth_authorize(request):
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        CLIENT_SECRET_FILE, scopes=SCOPES
+        settings.CLIENT_SECRET_FILE, scopes=settings.SCOPES
     )
     print('FLOW :', flow)
-    flow.redirect_uri = reverse('oauth_callback')
+    # flow.redirect_uri = request.build_absolute_uri(reverse("oauth_callback"))
+    flow.redirect_uri = 'http://127.0.0.1:8000/callback/'
+    print('URI~~~1~~~', flow.redirect_uri)
     authorization_url, state = flow.authorization_url(
         access_type='offline', include_granted_scopes='true'
     )
@@ -25,25 +47,27 @@ def oauth_authorize():
     return redirect(authorization_url)
 
 
-def oauth_callback():
+def oauth_callback(request):
     state = request.session['state']
     print('STATE 2: ', state)
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        CLIENT_SECRET_FILE, scopes=SCOPES, state=state
+        settings.CLIENT_SECRET_FILE, scopes=settings.SCOPES, state=state
     )
-    flow.redirect_uri = reverse('oauth_callback')
-
-    authorization_response = request.url
+    # flow.redirect_uri = request.build_absolute_uri(reverse("oauth_callback"))
+    flow.redirect_uri = 'http://127.0.0.1:8000/callback/'
+    print('URI~~~2~~~', flow.redirect_uri)
+    authorization_response = request.build_absolute_uri()
     print('AUTHORIZATION RES: ', authorization_response)
     flow.fetch_token(authorization_response=authorization_response)
+    print('CONTROL 1')
     credentials = flow.credentials
-
+    print('CONTROL 2')
     request.session['credentials'] = credentials_to_dict(credentials)
     print('CREDENTIALS: ', request.session['credentials'])
     return redirect(reverse('netkineskop:home'))
 
 
-def oauth_revoke():
+def oauth_revoke(request):
     if 'credentials' not in request.session:
         return (
             f'You need to <a href="/authorize">authorize</a> '
@@ -65,7 +89,7 @@ def oauth_revoke():
         return 'An error occured.'
 
 
-def clear_credentials():
+def clear_credentials(request):
     if 'credentials' in request.session:
         del request.session['credentials']
     return 'Credentials have been cleared.<br><br>'

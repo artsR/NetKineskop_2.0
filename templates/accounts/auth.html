@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <ul class="nav nav-pills card-header-pills">
+      <li class="nav-item">
+        <a class="nav-link {% if active == 'login' %}active{% endif %}" href="{% url 'login' %}">Sign In</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if active == 'register' %}active{% endif %}" href="{% url 'register' %}">Sign Up</a>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <form class="row g-3 align-items-center was-validated" action="" method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      {% if field.type != 'SubmitField' %}
+        {% if field.errors %}
+          {% render_field field class="form-control is-invalid" placeholder=field.label %}
+          {% for err in field.errors %}
+          <div class="invalid-feedback">
+           {{ err }}
+          </div>
+          {% endfor %}
+        {% else %}
+          {% render_field field class="form-control is-invalid" placeholder=field.label %}
+        {% endif %}
+      {% endif %}
+      {% endfor %}
+      <div class="col-md-4">
+        <input type="submit" class="btn btn-primary btn-block" value="Send"/>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
